@@ -1,0 +1,19 @@
+{
+  "name": "discord_bot",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/bot.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.2",
+    "@types/figlet": "^1.7.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "discord.js": "^14.17.3",
+    "figlet": "^1.8.0"
+  }
+}
