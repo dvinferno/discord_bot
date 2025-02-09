@@ -2,9 +2,7 @@
   "name": "discord_bot",
   "module": "index.ts",
   "type": "module",
-  "scripts": {
-    "start": "bun run src/bot.ts"
-  },
+  "main": "src/index",
   "devDependencies": {
     "@types/bun": "^1.2.2",
     "@types/figlet": "^1.7.0"
@@ -14,6 +12,7 @@
   },
   "dependencies": {
     "discord.js": "^14.17.3",
+    "dotenv": "^16.4.7",
     "figlet": "^1.8.0"
   }
 }
