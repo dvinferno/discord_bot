@@ -3,6 +3,9 @@
   "module": "index.ts",
   "type": "module",
   "main": "src/index",
+  "scripts": {
+  "start": "nodemon --ext ts,js index.ts"
+},
   "devDependencies": {
     "@types/bun": "^1.2.2",
     "@types/figlet": "^1.7.0"
