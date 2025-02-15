@@ -1,7 +1,9 @@
 import "dotenv/config";
 import "path";
 import fs from "fs";
-import { Client, Collection, Events, GatewayIntentBits, MessageFlags } from "discord.js";
+
+import { Client, Collection, GatewayIntentBits} from "discord.js";
+
 import type { Command } from "./types";
 import path from "path";
 
@@ -25,44 +27,26 @@ for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   const command = (await import(filePath)).default as Command;
 
-  if ('data' in command) {
+  if ("data" in command) {
     client.commands.set(command.data.name, command);
   } else {
     console.warn(`[WARNING] The command at ${file} is missing "data".`);
   }
 }
 
-client.once(Events.ClientReady, (readyClient) => {
-  console.log(`Ready! Logged in as ${readyClient.user.tag}`);
-});
+// Dynamically load events
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('ts'));
+
+for (const file of eventFiles) {
+  const filePath = path.join(eventsPath, file);
+  const event = require(filePath).default;
+
+  if (event.once) {
+    client.once(event.name, (...args) => event.execute(...args));
+  } else {
+    client.on(event.name, (...args) => event.execute(...args));
+  }
+}
 
 client.login(process.env.DISCORD_TOKEN);
-
-client.on(Events.InteractionCreate, async (interaction) => {
-  if (!interaction.isChatInputCommand()) return;
-
-  const command = client.commands.get(interaction.commandName);
-
-  if (!command) {
-    console.error(`No command matching ${interaction.commandName} was found.`);
-    return;
-  }
-
-  try {
-    await command.execute(interaction);
-  } catch (error) {
-    console.error(error);
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp({
-        content: "There was an error while executing this command!",
-        flags: MessageFlags.Ephemeral,
-      });
-    } else {
-      await interaction.reply({
-        content: "There was an error while executing this command!",
-        flags: MessageFlags.Ephemeral,
-      });
-    }
-  }
-
-});
